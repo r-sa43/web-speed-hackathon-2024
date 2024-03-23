@@ -1,12 +1,12 @@
 import { useAtom } from 'jotai/react';
-import { Suspense, useCallback } from 'react';
+import { lazy, Suspense, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import type { RouteParams } from 'regexparam';
 import { styled } from 'styled-components';
 import invariant from 'tiny-invariant';
 
 import { FavoriteBookAtomFamily } from '../../features/book/atoms/FavoriteBookAtomFamily';
-import { EpisodeListItem } from '../../features/episode/components/EpisodeListItem';
+import { useBook } from '../../features/book/hooks/useBook';
 import { useEpisodeList } from '../../features/episode/hooks/useEpisodeList';
 import { Box } from '../../foundation/components/Box';
 import { Flex } from '../../foundation/components/Flex';
@@ -17,6 +17,7 @@ import { Text } from '../../foundation/components/Text';
 import { useImage } from '../../foundation/hooks/useImage';
 import { Color, Space, Typography } from '../../foundation/styles/variables';
 
+const EpisodeComponent = lazy(() => import('./EpisodeComponent'));
 import { BottomNavigator } from './internal/BottomNavigator';
 
 const _HeadingWrapper = styled.section`
@@ -47,8 +48,8 @@ const BookDetailPage: React.FC = () => {
   const { bookId } = useParams<RouteParams<'/books/:bookId'>>();
   invariant(bookId);
 
+  const { data: book } = useBook({ params: { bookId } });
   const { data: episodeList } = useEpisodeList({ query: { bookId } });
-  const book = episodeList?.[0]!.book;
 
   const [isFavorite, toggleFavorite] = useAtom(FavoriteBookAtomFamily(bookId));
 
@@ -103,19 +104,7 @@ const BookDetailPage: React.FC = () => {
       <Separator />
 
       <section aria-label="エピソード一覧">
-        <Flex align="center" as="ul" direction="column" justify="center">
-          {episodeList.map((episode) => (
-            <EpisodeListItem key={episode.id} bookId={bookId} episode={episode} />
-          ))}
-          {episodeList.length === 0 && (
-            <>
-              <Spacer height={Space * 2} />
-              <Text color={Color.MONO_100} typography={Typography.NORMAL14}>
-                この作品はまだエピソードがありません
-              </Text>
-            </>
-          )}
-        </Flex>
+        <EpisodeComponent bookId={book.id} />
       </section>
     </Box>
   );
