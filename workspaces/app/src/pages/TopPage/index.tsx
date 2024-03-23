@@ -42,7 +42,7 @@ const TopPage: React.FC = () => {
           <Box maxWidth="100%" overflowX="scroll" overflowY="hidden">
             <Flex align="stretch" direction="row" gap={Space * 2} justify="flex-start">
               {featureList.map((feature) => (
-                <FeatureCard key={feature.id} bookId={feature.book.id} />
+                <FeatureCard key={feature.id} feature={feature} />
               ))}
             </Flex>
           </Box>

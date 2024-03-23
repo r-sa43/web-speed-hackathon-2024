@@ -1,13 +1,14 @@
-import { Link } from 'react-router-dom';
 import { Suspense } from 'react';
+import { Link } from 'react-router-dom';
 import { styled } from 'styled-components';
+
+import type { Feature } from '@wsh-2024/schema/src/api/features/GetFeatureListResponse';
 
 import { Flex } from '../../../foundation/components/Flex';
 import { Image } from '../../../foundation/components/Image';
 import { Text } from '../../../foundation/components/Text';
 import { useImage } from '../../../foundation/hooks/useImage';
 import { Color, Radius, Space, Typography } from '../../../foundation/styles/variables';
-import { useBook } from '../../book/hooks/useBook';
 
 const _Wrapper = styled(Link)`
   display: grid;
@@ -44,39 +45,37 @@ const _AvatarWrapper = styled.div`
 `;
 
 type Props = {
-  bookId: string;
+  feature: Feature;
 };
 
-const FeatureCard: React.FC<Props> = ({ bookId }) => {
-  const { data: book } = useBook({ params: { bookId } });
-
-  const imageUrl = useImage({ height: 96, imageId: book.image.id, width: 96 });
-  const authorImageUrl = useImage({ height: 32, imageId: book.author.image.id, width: 32 });
+const FeatureCard: React.FC<Props> = ({ feature }) => {
+  const imageUrl = useImage({ height: 96, imageId: feature.book.image.id, width: 96 });
+  const authorImageUrl = useImage({ height: 32, imageId: feature.book.author.image.id, width: 32 });
 
   return (
-    <_Wrapper to={`/books/${bookId}`}>
+    <_Wrapper to={`/books/${feature.book.id}`}>
       {imageUrl != null && (
         <_ImgWrapper>
-          <Image alt={book.image.alt} height={96} objectFit="cover" src={imageUrl} width={96} />
+          <Image alt={feature.book.image.alt} height={96} objectFit="cover" src={imageUrl} width={96} />
         </_ImgWrapper>
       )}
 
       <_ContentWrapper>
         <Text color={Color.MONO_100} typography={Typography.NORMAL16} weight="bold">
-          {book.name}
+          {feature.book.name}
         </Text>
         <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL14}>
-          {book.description}
+          {feature.book.description}
         </Text>
 
         <Flex align="center" gap={Space * 1} justify="flex-end">
           {authorImageUrl != null && (
             <_AvatarWrapper>
-              <Image alt={book.author.name} height={32} objectFit="cover" src={authorImageUrl} width={32} />
+              <Image alt={feature.book.author.name} height={32} objectFit="cover" src={authorImageUrl} width={32} />
             </_AvatarWrapper>
           )}
           <Text color={Color.MONO_100} typography={Typography.NORMAL14}>
-            {book.author.name}
+            {feature.book.author.name}
           </Text>
         </Flex>
       </_ContentWrapper>
