@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { lazy, useState } from 'react';
 import { useInterval, useUpdate } from 'react-use';
 import styled from 'styled-components';
 
-import { ComicViewerCore } from '../../../features/viewer/components/ComicViewerCore';
+const ComicViewerCore = lazy(() => import('../../../features/viewer/components/ComicViewerCore'));
 import { addUnitIfNeeded } from '../../../lib/css/addUnitIfNeeded';
 
 const IMAGE_WIDTH = 1075;
