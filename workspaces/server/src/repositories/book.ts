@@ -1,4 +1,5 @@
 import { eq } from 'drizzle-orm';
+import { or } from 'drizzle-orm/sql/expressions/conditions';
 import { HTTPException } from 'hono/http-exception';
 import { err, ok } from 'neverthrow';
 import type { Result } from 'neverthrow';
@@ -14,6 +15,7 @@ import type { PatchBookRequestParams } from '@wsh-2024/schema/src/api/books/Patc
 import type { PatchBookResponse } from '@wsh-2024/schema/src/api/books/PatchBookResponse';
 import type { PostBookRequestBody } from '@wsh-2024/schema/src/api/books/PostBookRequestBody';
 import type { PostBookResponse } from '@wsh-2024/schema/src/api/books/PostBookResponse';
+import type { SearchBookListRequestQuery } from '@wsh-2024/schema/src/api/books/SearchBookListRequestQuery';
 import { author, book, episode, episodePage, feature, ranking } from '@wsh-2024/schema/src/models';
 
 import { getDatabase } from '../database/drizzle';
@@ -23,6 +25,7 @@ type BookRepositoryInterface = {
   delete(options: { params: DeleteBookRequestParams }): Promise<Result<DeleteBookResponse, HTTPException>>;
   read(options: { params: GetBookRequestParams }): Promise<Result<GetBookResponse, HTTPException>>;
   readAll(options: { query: GetBookListRequestQuery }): Promise<Result<GetBookListResponse, HTTPException>>;
+  search(options: { query: SearchBookListRequestQuery }): Promise<Result<GetBookListResponse, HTTPException>>;
   update(options: {
     body: PatchBookRequestBody;
     params: PatchBookRequestParams;
@@ -105,8 +108,14 @@ class BookRepository implements BookRepositoryInterface {
           if (options.query.authorName != null) {
             return like(author.name, `%${options.query.authorName}%`);
           }
+          if (options.query.name != null && options.query.rubyName != null) {
+            return or(like(book.name, `%${options.query.name}%`), like(book.nameRuby, `%${options.query.rubyName}%`));
+          }
           if (options.query.name != null) {
             return like(book.name, `%${options.query.name}%`);
+          }
+          if (options.query.rubyName != null) {
+            return like(book.nameRuby, `%${options.query.rubyName}%`);
           }
           return;
         },
@@ -143,6 +152,62 @@ class BookRepository implements BookRepositoryInterface {
       return ok(data);
     } catch (cause) {
       if (cause instanceof HTTPException) {
+        return err(cause);
+      }
+      return err(new HTTPException(500, { cause, message: `Failed to read book list.` }));
+    }
+  }
+
+  async search(options: { query: SearchBookListRequestQuery }): Promise<Result<GetBookListResponse, HTTPException>> {
+    console.log({ options });
+    try {
+      const data = await getDatabase().query.book.findMany({
+        columns: {
+          description: true,
+          id: true,
+          name: true,
+          nameRuby: true,
+        },
+        where(book, { like }) {
+          if (options.query.name != null) {
+            return like(book.nameRuby, `%${options.query.name}%`);
+          }
+          return;
+        },
+        with: {
+          author: {
+            columns: {
+              description: true,
+              id: true,
+              name: true,
+            },
+            with: {
+              image: {
+                columns: {
+                  alt: true,
+                  id: true,
+                },
+              },
+            },
+          },
+          episodes: {
+            columns: {
+              id: true,
+            },
+          },
+          image: {
+            columns: {
+              alt: true,
+              id: true,
+            },
+          },
+        },
+      });
+
+      return ok(data);
+    } catch (cause) {
+      if (cause instanceof HTTPException) {
+        console.log({ cause });
         return err(cause);
       }
       return err(new HTTPException(500, { cause, message: `Failed to read book list.` }));
