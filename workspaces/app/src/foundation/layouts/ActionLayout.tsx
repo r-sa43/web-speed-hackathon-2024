@@ -17,7 +17,7 @@ type Props = {
   rightContent?: React.ReactNode;
 };
 
-export const ActionLayout: React.FC<Props> = ({ leftContent, rightContent }) => {
+const ActionLayout: React.FC<Props> = ({ leftContent, rightContent }) => {
   return (
     <Container>
       <_Header>
@@ -35,3 +35,5 @@ export const ActionLayout: React.FC<Props> = ({ leftContent, rightContent }) => 
     </Container>
   );
 };
+
+export { ActionLayout as default };

@@ -10,7 +10,7 @@ const _Content = styled.div`
   padding: 0 ${Space * 2}px;
 `;
 
-export const CommonLayout: React.FC = () => {
+const CommonLayout: React.FC = () => {
   return (
     <Container>
       <_Content>
@@ -20,3 +20,5 @@ export const CommonLayout: React.FC = () => {
     </Container>
   );
 };
+
+export { CommonLayout as default };
