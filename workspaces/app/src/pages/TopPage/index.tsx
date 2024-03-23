@@ -1,6 +1,8 @@
 import moment from 'moment-timezone';
 import { Suspense, useId } from 'react';
 
+import type { Ranking } from '@wsh-2024/schema/src/api/rankings/GetRankingListResponse';
+
 import { BookCard } from '../../features/book/components/BookCard';
 import { FeatureCard } from '../../features/feature/components/FeatureCard';
 import { useFeatureList } from '../../features/feature/hooks/useFeatureList';
@@ -55,8 +57,8 @@ const TopPage: React.FC = () => {
           <Spacer height={Space * 2} />
           <Box maxWidth="100%" overflowX="hidden" overflowY="hidden">
             <Flex align="center" as="ul" direction="column" justify="center">
-              {rankingList.map((ranking) => (
-                <RankingCard key={ranking.id} bookId={ranking.book.id} />
+              {rankingList.map((ranking: Ranking) => (
+                <RankingCard key={ranking.id} bookId={ranking.book.id} ranking={ranking} />
               ))}
             </Flex>
           </Box>
