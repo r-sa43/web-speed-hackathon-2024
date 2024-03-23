@@ -4,7 +4,7 @@
   "scripts": {
     "start": "run-s start:client start:admin",
     "start:client": "playwright test ./src/client --update-snapshots",
-    "start:admin": "playwright test --workers=1 ./src/admin",
+    "start:admin": "playwright test --workers=1 ./src/admin --update-snapshots",
     "start:debug": "DEBUG=pw:api run-s start:client:debug start:admin:debug",
     "start:client:debug": "playwright test --debug ./src/client",
     "start:admin:debug": "playwright test --workers=1 --debug ./src/admin"
