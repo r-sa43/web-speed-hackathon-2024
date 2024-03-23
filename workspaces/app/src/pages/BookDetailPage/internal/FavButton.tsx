@@ -1,4 +1,5 @@
-import { Favorite, FavoriteBorder } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import styled from 'styled-components';
 
 import { Color, Space } from '../../../foundation/styles/variables';
@@ -29,9 +30,9 @@ export const FavButton: React.FC<Props> = ({ enabled, onClick }) => {
       onClick={onClick}
     >
       {enabled ? (
-        <Favorite style={{ color: Color.Favorite, height: 24, width: 24 }} />
+        <FavoriteIcon style={{ color: Color.Favorite, height: 24, width: 24 }} />
       ) : (
-        <FavoriteBorder style={{ color: Color.MONO_40, height: 24, width: 24 }} />
+        <FavoriteBorderIcon style={{ color: Color.MONO_40, height: 24, width: 24 }} />
       )}
     </_Button>
   );
