@@ -1,8 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-import type { GetBookResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
-
 import { Box } from '../../../foundation/components/Box';
 import { Flex } from '../../../foundation/components/Flex';
 import { Image } from '../../../foundation/components/Image';
@@ -11,6 +9,7 @@ import { Spacer } from '../../../foundation/components/Spacer';
 import { Text } from '../../../foundation/components/Text';
 import { useImage } from '../../../foundation/hooks/useImage';
 import { Color, Radius, Space, Typography } from '../../../foundation/styles/variables';
+import { useBook } from '../hooks/useBook';
 
 const _Wrapper = styled.li`
   width: 100%;
@@ -29,10 +28,12 @@ const _ImgWrapper = styled.div`
 `;
 
 type Props = {
-  book: GetBookResponse;
+  bookId: string;
 };
 
-export const BookListItem: React.FC<Props> = ({ book }) => {
+export const BookListItem: React.FC<Props> = ({ bookId }) => {
+  const { data: book } = useBook({ params: { bookId } });
+
   const imageUrl = useImage({ height: 64, imageId: book.image.id, width: 64 });
 
   return (

@@ -5,7 +5,6 @@ export const GetBookListRequestQuerySchema = z.object({
   authorName: z.string().optional(),
   limit: z.coerce.number().optional(),
   name: z.string().optional(),
-  rubyName: z.string().optional(),
   offset: z.coerce.number().optional(),
 });
 
