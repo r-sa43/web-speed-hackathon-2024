@@ -7,5 +7,4 @@ import { initializeDatabase } from './drizzle';
 export const seeding = async () => {
   await fs.copyFile(DATABASE_SEED_PATH, DATABASE_PATH);
   initializeDatabase();
-  console.log('Finished seeding');
 };

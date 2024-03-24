@@ -95,7 +95,6 @@ app.get(
     const cacheKey = `${reqImgId}-${resImgFormat}-${c.req.valid('query').width}-${c.req.valid('query').height}`;
     const cacheImage = imageCache.get(cacheKey);
     if (cacheImage) {
-      console.log('hit!', imageCache.size);
       c.header('Content-Type', IMAGE_MIME_TYPE[resImgFormat]);
       return c.body(cacheImage);
     }
