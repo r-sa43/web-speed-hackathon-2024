@@ -10,14 +10,13 @@ import { registerServiceWorker } from './utils/registerServiceWorker';
 
 const main = async () => {
   await registerServiceWorker();
-  // await preloadImages();
-
+  const root = document.getElementById('root')!;
   $(document).ready(() => {
     if (window.location.pathname.startsWith('/admin')) {
-      ReactDOM.createRoot($('#root').get(0)!).render(<AdminApp />);
+      ReactDOM.createRoot(root).render(<AdminApp />);
     } else {
       ReactDOM.hydrateRoot(
-        $('#root').get(0)!,
+        root,
         <SWRConfig value={{ revalidateIfStale: true, revalidateOnFocus: false, revalidateOnReconnect: false }}>
           <BrowserRouter>
             <ClientApp />
