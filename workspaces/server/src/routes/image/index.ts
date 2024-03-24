@@ -61,6 +61,8 @@ const IMAGE_CONVERTER: Record<SupportedImageExtension, ConverterInterface> = {
   ['webp']: webpConverter,
 };
 
+const imageCache = new Map<string, Uint8Array>();
+
 const app = new Hono();
 
 app.get(
@@ -88,6 +90,14 @@ app.get(
 
     if (!isSupportedImageFormat(resImgFormat)) {
       throw new HTTPException(501, { message: `Image format: ${resImgFormat} is not supported.` });
+    }
+
+    const cacheKey = `${reqImgId}-${resImgFormat}-${c.req.valid('query').width}-${c.req.valid('query').height}`;
+    const cacheImage = imageCache.get(cacheKey);
+    if (cacheImage) {
+      console.log('hit!', imageCache.size);
+      c.header('Content-Type', IMAGE_MIME_TYPE[resImgFormat]);
+      return c.body(cacheImage);
     }
 
     const origFileGlob = [path.resolve(IMAGES_PATH, `${reqImgId}`), path.resolve(IMAGES_PATH, `${reqImgId}.*`)];
@@ -124,6 +134,8 @@ app.get(
       height: manipulated.height,
       width: manipulated.width,
     });
+
+    imageCache.set(cacheKey, resBinary);
 
     c.header('Content-Type', IMAGE_MIME_TYPE[resImgFormat]);
     return c.body(resBinary);
